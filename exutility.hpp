@@ -1,9 +1,9 @@
 #ifndef EXUTILITY_HPP
 #define EXUTILITY_HPP
 
-#include <type_traits>
+#include "detector.hpp"
 #include <queue>
-#include <iterator>
+
 
 namespace estd{
     
@@ -28,16 +28,13 @@ namespace estd{
     template<typename Container>
     inline constexpr bool is_priority_queue_v = is_priority_queue<Container>::value;
 
-    template<typename T, typename = void>
-    struct is_iterable : std::false_type{};
+    template<typename T>
+    inline constexpr auto is_iterable_v = is_detected_v<free_begin, T> && is_detected_v<free_end, T>;
 
     template<typename T>
-    struct is_iterable<T, std::void_t<decltype(std::begin(std::declval<T&>())), 
-                                    decltype(std::end(std::declval<T&>()))>> 
-                                    : std::true_type {};
-
-    template<typename T>
-    inline constexpr bool is_iterable_v = is_iterable<T>::value;
+    inline constexpr auto is_reverse_iterable_v = is_iterable_v<T> &&
+                                              is_detected_v<free_rbegin, T> && 
+                                              is_detected_v<free_rend, T>;
 }
 
 #endif
